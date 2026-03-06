@@ -1,11 +1,13 @@
+using Api.Domain;
 using Api.Infrastructure.Repositories;
+using Api.Infrastructure.Storage;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ImagesController(IImageRepository imageRepository) : ControllerBase
+public class ImagesController(IImageRepository imageRepository, IStorageService storageService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -15,8 +17,20 @@ public class ImagesController(IImageRepository imageRepository) : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Upload()
+    public async Task<IActionResult> Upload(IFormFile file)
     {
-        return StatusCode(StatusCodes.Status501NotImplemented);
+        var storageKey = await storageService.UploadAsync(file.OpenReadStream(), file.FileName, file.ContentType);
+
+        var image = new Image
+        {
+            FileName = file.FileName,
+            StorageKey = storageKey,
+            ContentType = file.ContentType,
+            FileSize = file.Length,
+            UploadedAt = DateTime.UtcNow
+        };
+
+        var created = await imageRepository.CreateAsync(image);
+        return CreatedAtAction(nameof(GetAll), null, created);
     }
 }

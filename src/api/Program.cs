@@ -1,5 +1,6 @@
 using Api.Infrastructure.Database;
 using Api.Infrastructure.Repositories;
+using Api.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Connection string 'Default' is not configured.");
 
 builder.Services.AddScoped<IImageRepository>(_ => new ImageRepository(connectionString));
+builder.Services.AddTransient<IStorageService, LocalStorageService>();
 
 var app = builder.Build();
 
