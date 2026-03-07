@@ -23,5 +23,14 @@ services:
     depends_on:
       - db
 
+  web:
+    build:
+      context: src/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
 volumes:
   postgres_data:
