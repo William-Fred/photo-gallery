@@ -8,7 +8,7 @@ type Photo = {
 
 const PAGE_SIZE = 12;
 
-export default function GalleryPage() {
+export default function AdminGalleryPage() {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -21,10 +21,7 @@ export default function GalleryPage() {
             setError(null);
             try {
                 const res = await fetch(`/api/photos?page=${page}&pageSize=${PAGE_SIZE}`);
-
-                if (!res.ok) {
-                    throw new Error(`Failed to fetch photos: ${res.statusText}`);
-                }
+                if (!res.ok) throw new Error(`Failed to fetch photos: ${res.statusText}`);
                 const photoData: Photo[] = await res.json();
                 setPhotos(photoData);
                 setTotal(photoData.length);
@@ -37,11 +34,17 @@ export default function GalleryPage() {
         fetchPhotos();
     }, [page]);
 
+    async function deletePhoto(id: string) {
+        await fetch(`/api/photos/${id}`, { method: 'DELETE' })
+        setPhotos(prev => prev.filter(p => p.id !== id))
+        setTotal(prev => prev - 1)
+    }
+
     const totalPages = Math.ceil(total / PAGE_SIZE);
 
     return (
         <main className="max-w-screen-2xl mx-auto px-8 py-16">
-            <h2 className="text-3xl font-serif text-stone-100 mb-10">Gallery</h2>
+            <h2 className="text-3xl font-serif text-stone-100 mb-10">Admin — Gallery</h2>
 
             {loading && <p className="text-stone-500">Loading photos...</p>}
             {error && <p className="text-red-400">Error: {error}</p>}
@@ -49,20 +52,28 @@ export default function GalleryPage() {
                 <p className="text-stone-500 font-light">No photographs yet.</p>
             )}
 
-            {/* bildgrid */}
             <div className="columns-2 md:columns-3 gap-4">
                 {photos.map(photo => (
-                    <div key={photo.id} className="mb-4 break-inside-avoid">
+                    <div key={photo.id} className="mb-4 break-inside-avoid relative group">
                         <img
                             src={`/api/photos/${photo.id}/file`}
                             alt={photo.fileName}
                             className="w-full block"
                             onError={e => { (e.target as HTMLImageElement).parentElement!.style.display = 'none' }} />
+                        <button
+                            onClick={() => deletePhoto(photo.id)}
+                            className="absolute top-2 right-2 p-2 bg-stone-900/80 text-stone-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14H6L5 6" />
+                                <path d="M10 11v6M14 11v6" />
+                                <path d="M9 6V4h6v2" />
+                            </svg>
+                        </button>
                     </div>
                 ))}
             </div>
 
-            {/* paginering */}
             {totalPages > 1 && (
                 <div className="mt-12 flex gap-2 justify-center">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
