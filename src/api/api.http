@@ -1,4 +1,40 @@
-@api_HostAddress = http://localhost:5068
+@api_HostAddress = http://localhost:8080
+@photo_id =fa985b5e-1bd2-4c63-8ee4-5b4e1cf8884c
 
-GET {{api_HostAddress}}/weatherforecast/
+### Hämta alla foton
+GET {{api_HostAddress}}/api/photos
 Accept: application/json
+
+###
+
+### Hämta metadata för ett foto
+GET {{api_HostAddress}}/api/photos/{{photo_id}}
+Accept: application/json
+
+###
+
+### Hämta bildfil (kör denna och kolla Content-Length i response headers)
+GET {{api_HostAddress}}/api/photos/{{photo_id}}/file
+
+###
+
+### Ta bort foto (raderar från R2 och databasen)
+DELETE {{api_HostAddress}}/api/photos/{{photo_id}}
+
+###
+
+### Hämta alla projekt
+GET {{api_HostAddress}}/api/projects
+Accept: application/json
+
+###
+
+### Skapa projekt
+POST {{api_HostAddress}}/api/projects
+Content-Type: application/json
+
+{
+  "name": "Island",
+  "year": 2024,
+  "description": null
+}

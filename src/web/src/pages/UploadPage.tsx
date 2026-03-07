@@ -9,6 +9,8 @@ export default function UploadPage() {
   const [uploadState, setUploadState] = useState<UploadState>('idle')
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isDragging, setIsDragging] = useState(false)
+  const [project, setProject] = useState('')
+  const [year, setYear] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   function selectFile(selected: File) {
@@ -56,6 +58,8 @@ export default function UploadPage() {
 
     const formData = new FormData()
     formData.append('file', file)
+    if (project.trim()) formData.append('project', project.trim())
+    if (year.trim()) formData.append('year', year.trim())
 
     try {
       const response = await fetch('/api/photos', {
@@ -119,6 +123,34 @@ export default function UploadPage() {
             </p>
           </div>
         )}
+      </div>
+
+      {/* Projekt och år */}
+      <div className="mt-6 grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs tracking-widest uppercase text-stone-500 font-light mb-2">
+            Project
+          </label>
+          <input
+            type="text"
+            value={project}
+            onChange={e => setProject(e.target.value)}
+            placeholder="e.g. Island 2024"
+            className="w-full bg-stone-900/40 border border-stone-700 px-3 py-2 text-sm text-stone-300 font-light placeholder:text-stone-700 focus:outline-none focus:border-amber-600/50"
+          />
+        </div>
+        <div>
+          <label className="block text-xs tracking-widest uppercase text-stone-500 font-light mb-2">
+            Year
+          </label>
+          <input
+            type="number"
+            value={year}
+            onChange={e => setYear(e.target.value)}
+            placeholder={String(new Date().getFullYear())}
+            className="w-full bg-stone-900/40 border border-stone-700 px-3 py-2 text-sm text-stone-300 font-light placeholder:text-stone-700 focus:outline-none focus:border-amber-600/50"
+          />
+        </div>
       </div>
 
       {/* File info */}
