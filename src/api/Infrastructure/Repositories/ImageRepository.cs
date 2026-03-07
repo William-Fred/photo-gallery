@@ -15,20 +15,21 @@ public class ImageRepository(string connectionString) : IImageRepository
         uploaded_at  AS "UploadedAt"
     FROM images
     """;
-    public async Task<IEnumerable<Image>> GetAllAsync()
+
+    public async Task<IEnumerable<Photo>> GetAllAsync()
     {
         await using var conn = new Npgsql.NpgsqlConnection(connectionString);
-        return await conn.QueryAsync<Image>(SelectColumns);
+        return await conn.QueryAsync<Photo>(SelectColumns);
     }
 
-    public async Task<Image?> GetByIdAsync(Guid id)
+    public async Task<Photo?> GetByIdAsync(Guid id)
     {
         await using var conn = new Npgsql.NpgsqlConnection(connectionString);
         var query = $"{SelectColumns} WHERE id = @Id";
-        return await conn.QuerySingleOrDefaultAsync<Image>(query, new { Id = id });
+        return await conn.QuerySingleOrDefaultAsync<Photo>(query, new { Id = id });
     }
 
-    public async Task<Image> CreateAsync(Image image)
+    public async Task<Photo> CreateAsync(Photo photo)
     {
         const string sql = """
             INSERT INTO images (file_name, storage_key, content_type, file_size, uploaded_at)
@@ -43,6 +44,6 @@ public class ImageRepository(string connectionString) : IImageRepository
             """;
 
         await using var conn = new Npgsql.NpgsqlConnection(connectionString);
-        return await conn.QuerySingleAsync<Image>(sql, image);
+        return await conn.QuerySingleAsync<Photo>(sql, photo);
     }
 }

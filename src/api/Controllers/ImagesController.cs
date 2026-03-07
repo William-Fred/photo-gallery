@@ -1,4 +1,5 @@
 using Api.Domain;
+using Api.Infrastructure.Image;
 using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Storage;
 using Microsoft.AspNetCore.Mvc;
@@ -7,13 +8,29 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ImagesController(IImageRepository imageRepository, IStorageService storageService) : ControllerBase
+public class ImagesController(
+    IImageRepository imageRepository,
+    IStorageService storageService,
+    WatermarkService watermarkService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var images = await imageRepository.GetAllAsync();
-        return Ok(images);
+        var photos = await imageRepository.GetAllAsync();
+        return Ok(photos);
+    }
+
+    [HttpGet("{id:guid}/file")]
+    public async Task<IActionResult> GetFile(Guid id)
+    {
+        var photo = await imageRepository.GetByIdAsync(id);
+        if (photo is null)
+            return NotFound();
+
+        var stream = await storageService.DownloadAsync(photo.StorageKey);
+        var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
+
+        return File(watermarked, "image/jpeg");
     }
 
     [HttpPost]
@@ -21,7 +38,7 @@ public class ImagesController(IImageRepository imageRepository, IStorageService 
     {
         var storageKey = await storageService.UploadAsync(file.OpenReadStream(), file.FileName, file.ContentType);
 
-        var image = new Image
+        var photo = new Photo
         {
             FileName = file.FileName,
             StorageKey = storageKey,
@@ -30,7 +47,7 @@ public class ImagesController(IImageRepository imageRepository, IStorageService 
             UploadedAt = DateTime.UtcNow
         };
 
-        var created = await imageRepository.CreateAsync(image);
+        var created = await imageRepository.CreateAsync(photo);
         return CreatedAtAction(nameof(GetAll), null, created);
     }
 }

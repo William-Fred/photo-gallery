@@ -1,6 +1,6 @@
 namespace Api.Domain;
 
-public class Image
+public class Photo
 {
     public Guid Id { get; init; }
     public string FileName { get; init; } = string.Empty;

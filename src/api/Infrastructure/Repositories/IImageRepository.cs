@@ -4,7 +4,7 @@ namespace Api.Infrastructure.Repositories;
 
 public interface IImageRepository
 {
-    Task<IEnumerable<Image>> GetAllAsync();
-    Task<Image?> GetByIdAsync(Guid id);
-    Task<Image> CreateAsync(Image image);
+    Task<IEnumerable<Photo>> GetAllAsync();
+    Task<Photo?> GetByIdAsync(Guid id);
+    Task<Photo> CreateAsync(Photo photo);
 }
