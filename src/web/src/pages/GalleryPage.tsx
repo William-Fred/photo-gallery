@@ -20,7 +20,7 @@ export default function GalleryPage() {
             setLoading(true);
             setError(null);
             try {
-                const res = await fetch(`/api/photos?page=${page}&pageSize=${PAGE_SIZE}`);
+                const res = await fetch(`/api/photos/wall?page=${page}&pageSize=${PAGE_SIZE}`);
 
                 if (!res.ok) {
                     throw new Error(`Failed to fetch photos: ${res.statusText}`);
@@ -41,7 +41,7 @@ export default function GalleryPage() {
 
     return (
         <main className="max-w-screen-2xl mx-auto px-8 py-16">
-            <h2 className="text-3xl font-serif text-stone-100 mb-10">Gallery</h2>
+            <h2 className="text-3xl font-serif text-stone-100 mb-10">Wall</h2>
 
             {loading && <p className="text-stone-500">Loading photos...</p>}
             {error && <p className="text-red-400">Error: {error}</p>}
