@@ -19,6 +19,7 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - RunDbMigrations=false
       - ConnectionStrings__Default=Host=db;Port=5432;Database=photogallery;Username=postgres;Password=postgres
       - R2__Endpoint=${R2_ENDPOINT}
       - R2__AccessKeyId=${R2_ACCESS_KEY_ID}

@@ -31,7 +31,7 @@ public class WatermarkService
         });
 
         var output = new MemoryStream();
-        await image.SaveAsJpegAsync(output);
+        await image.SaveAsJpegAsync(output, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder { Quality = 95 });
         output.Position = 0;
         return output;
     }

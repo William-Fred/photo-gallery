@@ -18,11 +18,13 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Connection string 'Default' is not configured.");
 
 builder.Services.AddScoped<IPhotoRepository>(_ => new PhotoRepository(connectionString));
+builder.Services.AddScoped<IProjectRepository>(_ => new ProjectRepository(connectionString));
 builder.Services.AddTransient<IStorageService, R2StorageService>();
 
 var app = builder.Build();
 
-DbMigrator.Run(connectionString);
+if (builder.Configuration.GetValue("RunDbMigrations", defaultValue: false))
+    DbMigrator.Run(connectionString);
 
 if (app.Environment.IsDevelopment())
 {
