@@ -8,4 +8,5 @@ public class Photo
     public string ContentType { get; init; } = string.Empty;
     public long FileSize { get; init; }
     public DateTime UploadedAt { get; init; }
+    public Guid? ProjectId { get; init; }
 }
