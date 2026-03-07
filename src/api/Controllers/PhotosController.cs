@@ -8,7 +8,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ImagesController(
+public class PhotosController(
     IPhotoRepository photoRepository,
     IStorageService storageService,
     WatermarkService watermarkService) : ControllerBase

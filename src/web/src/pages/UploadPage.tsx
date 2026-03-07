@@ -58,7 +58,7 @@ export default function UploadPage() {
     formData.append('file', file)
 
     try {
-      const response = await fetch('/api/images', {
+      const response = await fetch('/api/photos', {
         method: 'POST',
         body: formData,
       })
