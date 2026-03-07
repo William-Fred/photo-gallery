@@ -56,7 +56,8 @@ export default function GalleryPage() {
                         <img
                             src={`/api/photos/${photo.id}/file`}
                             alt={photo.fileName}
-                            className="w-full h-full object-cover" />
+                            className="w-full h-full object-cover"
+                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                     </div>
                 ))}
             </div>

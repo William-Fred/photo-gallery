@@ -27,10 +27,16 @@ public class PhotosController(
         if (photo is null)
             return NotFound();
 
-        var stream = await storageService.DownloadAsync(photo.StorageKey);
-        var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
-
-        return File(watermarked, "image/jpeg");
+        try
+        {
+            var stream = await storageService.DownloadAsync(photo.StorageKey);
+            var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
+            return File(watermarked, "image/jpeg");
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost]
