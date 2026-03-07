@@ -3,7 +3,7 @@ using Dapper;
 
 namespace Api.Infrastructure.Repositories;
 
-public class ImageRepository(string connectionString) : IImageRepository
+public class PhotoRepository(string connectionString) : IPhotoRepository
 {
     private const string SelectColumns = """
       SELECT

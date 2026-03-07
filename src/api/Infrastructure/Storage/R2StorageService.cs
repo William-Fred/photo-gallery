@@ -1,6 +1,8 @@
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Api.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Api.Infrastructure.Storage;
 
@@ -9,16 +11,18 @@ public class R2StorageService : IStorageService
     private readonly AmazonS3Client _client;
     private readonly string _bucketName;
 
-    public R2StorageService(string endpoint, string accessKeyId, string secretAccessKey, string bucketName)
+    public R2StorageService(IOptions<PhotoGalleryOptions> options)
     {
+        var r2 = options.Value.R2;
+
         var config = new AmazonS3Config
         {
-            ServiceURL = endpoint,
+            ServiceURL = r2.Endpoint,
             ForcePathStyle = true,
         };
 
-        _client = new AmazonS3Client(new BasicAWSCredentials(accessKeyId, secretAccessKey), config);
-        _bucketName = bucketName;
+        _client = new AmazonS3Client(new BasicAWSCredentials(r2.AccessKeyId, r2.SecretAccessKey), config);
+        _bucketName = r2.BucketName;
     }
 
     public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType)

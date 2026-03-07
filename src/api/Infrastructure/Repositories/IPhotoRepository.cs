@@ -2,7 +2,7 @@ using Api.Domain;
 
 namespace Api.Infrastructure.Repositories;
 
-public interface IImageRepository
+public interface IPhotoRepository
 {
     Task<IEnumerable<Photo>> GetAllAsync();
     Task<Photo?> GetByIdAsync(Guid id);

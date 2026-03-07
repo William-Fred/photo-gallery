@@ -1,5 +1,5 @@
 using Api.Domain;
-using Api.Infrastructure.Image;
+using Api.Services;
 using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Storage;
 using Microsoft.AspNetCore.Mvc;
@@ -9,21 +9,21 @@ namespace Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class ImagesController(
-    IImageRepository imageRepository,
+    IPhotoRepository photoRepository,
     IStorageService storageService,
     WatermarkService watermarkService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var photos = await imageRepository.GetAllAsync();
+        var photos = await photoRepository.GetAllAsync();
         return Ok(photos);
     }
 
     [HttpGet("{id:guid}/file")]
     public async Task<IActionResult> GetFile(Guid id)
     {
-        var photo = await imageRepository.GetByIdAsync(id);
+        var photo = await photoRepository.GetByIdAsync(id);
         if (photo is null)
             return NotFound();
 
@@ -47,7 +47,7 @@ public class ImagesController(
             UploadedAt = DateTime.UtcNow
         };
 
-        var created = await imageRepository.CreateAsync(photo);
+        var created = await photoRepository.CreateAsync(photo);
         return CreatedAtAction(nameof(GetAll), null, created);
     }
 }
