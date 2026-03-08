@@ -65,19 +65,19 @@ export default function GalleryPage() {
                         }}
                         onClick={() => setSelectedIndex(i)}
                     >
-                        <div className="relative bg-stone-100 p-2 pb-7 shadow-lg shadow-stone-950/50 overflow-hidden transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-stone-950/70 group-hover:-translate-y-0.5">
+                        <div className="relative overflow-hidden ring-1 ring-stone-700/50">
                             <img
                                 src={`/api/photos/${photo.id}/file`}
                                 alt={photo.fileName}
-                                className="w-full block transition-all duration-300 group-hover:brightness-105"
+                                className="w-full block transition-opacity duration-300 group-hover:opacity-75"
                                 onError={e => { (e.target as HTMLImageElement).parentElement!.parentElement!.style.display = 'none' }}
                             />
-                            {/* datum i penntext nere på "passepatout"-ytan */}
-                            <p className="text-center text-stone-400 text-[10px] font-light tracking-wide mt-1.5 select-none">
-                                {new Date(photo.uploadedAt).toLocaleDateString('sv-SE')}
-                            </p>
-                            {/* hover overlay med filnamn */}
-                            <div className="absolute inset-0 bg-stone-950/0 group-hover:bg-stone-950/20 transition-colors duration-300 pointer-events-none" />
+                            <div className="absolute bottom-0 left-0 right-0 bg-stone-950/80 px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+                                <p className="text-xs text-stone-300 truncate">{photo.fileName}</p>
+                                <p className="text-xs text-stone-600 mt-0.5">
+                                    {new Date(photo.uploadedAt).toLocaleDateString('sv-SE')}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 ))}
