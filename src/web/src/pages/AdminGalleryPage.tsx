@@ -54,12 +54,18 @@ export default function AdminGalleryPage() {
 
             <div className="columns-2 md:columns-3 gap-4">
                 {photos.map(photo => (
-                    <div key={photo.id} className="mb-4 break-inside-avoid relative group">
+                    <div key={photo.id} className="mb-4 break-inside-avoid relative group overflow-hidden">
                         <img
                             src={`/api/photos/${photo.id}/file`}
                             alt={photo.fileName}
-                            className="w-full block"
+                            className="w-full block transition-opacity duration-300 group-hover:opacity-75"
                             onError={e => { (e.target as HTMLImageElement).parentElement!.style.display = 'none' }} />
+                        <div className="absolute bottom-0 left-0 right-0 bg-stone-950/80 px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+                            <p className="text-xs text-stone-300 truncate">{photo.fileName}</p>
+                            <p className="text-xs text-stone-600 mt-0.5">
+                                {new Date(photo.uploadedAt).toLocaleDateString('sv-SE')}
+                            </p>
+                        </div>
                         <button
                             onClick={() => deletePhoto(photo.id)}
                             className="absolute top-2 right-2 p-2 bg-stone-900/80 text-stone-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">

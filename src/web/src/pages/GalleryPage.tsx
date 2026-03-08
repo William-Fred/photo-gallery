@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Lightbox from "../components/Lightbox";
 
 type Photo = {
     id: string
@@ -6,7 +7,7 @@ type Photo = {
     uploadedAt: string
 }
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 24;
 
 export default function GalleryPage() {
     const [photos, setPhotos] = useState<Photo[]>([]);
@@ -14,20 +15,21 @@ export default function GalleryPage() {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         async function fetchPhotos() {
             setLoading(true);
+            setVisible(false);
             setError(null);
             try {
                 const res = await fetch(`/api/photos/wall?page=${page}&pageSize=${PAGE_SIZE}`);
-
-                if (!res.ok) {
-                    throw new Error(`Failed to fetch photos: ${res.statusText}`);
-                }
+                if (!res.ok) throw new Error(`Failed to fetch photos: ${res.statusText}`);
                 const photoData: Photo[] = await res.json();
                 setPhotos(photoData);
                 setTotal(photoData.length);
+                setTimeout(() => setVisible(true), 50);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Unknown error');
             } finally {
@@ -40,6 +42,7 @@ export default function GalleryPage() {
     const totalPages = Math.ceil(total / PAGE_SIZE);
 
     return (
+    <>
         <main className="max-w-screen-2xl mx-auto px-8 py-16">
             <h2 className="text-3xl font-serif text-stone-100 mb-10">Wall</h2>
 
@@ -49,15 +52,33 @@ export default function GalleryPage() {
                 <p className="text-stone-500 font-light">No photographs yet.</p>
             )}
 
-            {/* bildgrid */}
-            <div className="columns-2 md:columns-3 gap-4">
-                {photos.map(photo => (
-                    <div key={photo.id} className="mb-4 break-inside-avoid">
-                        <img
-                            src={`/api/photos/${photo.id}/file`}
-                            alt={photo.fileName}
-                            className="w-full block"
-                            onError={e => { (e.target as HTMLImageElement).parentElement!.style.display = 'none' }} />
+            {/* fotovägg — masonry */}
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-5">
+                {photos.map((photo, i) => (
+                    <div
+                        key={photo.id}
+                        className="mb-5 break-inside-avoid cursor-pointer group relative"
+                        style={{
+                            opacity: visible ? 1 : 0,
+                            transform: visible ? 'translateY(0)' : 'translateY(12px)',
+                            transition: `opacity 0.4s ease ${(i % 12) * 40}ms, transform 0.4s ease ${(i % 12) * 40}ms`,
+                        }}
+                        onClick={() => setSelectedIndex(i)}
+                    >
+                        <div className="relative bg-stone-100 p-2 pb-7 shadow-lg shadow-stone-950/50 overflow-hidden transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-stone-950/70 group-hover:-translate-y-0.5">
+                            <img
+                                src={`/api/photos/${photo.id}/file`}
+                                alt={photo.fileName}
+                                className="w-full block transition-all duration-300 group-hover:brightness-105"
+                                onError={e => { (e.target as HTMLImageElement).parentElement!.parentElement!.style.display = 'none' }}
+                            />
+                            {/* datum i penntext nere på "passepatout"-ytan */}
+                            <p className="text-center text-stone-400 text-[10px] font-light tracking-wide mt-1.5 select-none">
+                                {new Date(photo.uploadedAt).toLocaleDateString('sv-SE')}
+                            </p>
+                            {/* hover overlay med filnamn */}
+                            <div className="absolute inset-0 bg-stone-950/0 group-hover:bg-stone-950/20 transition-colors duration-300 pointer-events-none" />
+                        </div>
                     </div>
                 ))}
             </div>
@@ -81,5 +102,15 @@ export default function GalleryPage() {
                 </div>
             )}
         </main>
+
+        {selectedIndex !== null && (
+            <Lightbox
+                photos={photos}
+                index={selectedIndex}
+                onClose={() => setSelectedIndex(null)}
+                onNavigate={setSelectedIndex}
+            />
+        )}
+    </>
     )
 }

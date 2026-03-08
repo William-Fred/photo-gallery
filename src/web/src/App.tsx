@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import HomePage from './pages/HomePage'
+import ProjectsPage from './pages/ProjectsPage'
 import GalleryPage from './pages/GalleryPage'
 import ProjectPage from './pages/ProjectPage'
 import UploadPage from './pages/UploadPage'
@@ -14,8 +15,9 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/wall" element={<GalleryPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectPage />} />
+          <Route path="/wall" element={<GalleryPage />} />
           <Route path="/admin" element={<AdminGalleryPage />} />
           <Route path="/admin/upload" element={<UploadPage />} />
           <Route path="/admin/projects" element={<AdminProjectsPage />} />
