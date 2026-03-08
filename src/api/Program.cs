@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<Api.Services.WatermarkService>();
+builder.Services.AddMemoryCache(opts => opts.SizeLimit = 500 * 1024 * 1024); // 500 MB
 builder.Services.AddOpenApi();
 
 builder.Services.AddOptions<PhotoGalleryOptions>()

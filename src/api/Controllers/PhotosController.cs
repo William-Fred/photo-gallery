@@ -3,6 +3,7 @@ using Api.Services;
 using Api.Infrastructure.Repositories;
 using Api.Infrastructure.Storage;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Api.Controllers;
 
@@ -11,7 +12,8 @@ namespace Api.Controllers;
 public class PhotosController(
     IPhotoRepository photoRepository,
     IStorageService storageService,
-    WatermarkService watermarkService) : ControllerBase
+    WatermarkService watermarkService,
+    IMemoryCache cache) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] Guid? projectId)
@@ -30,20 +32,34 @@ public class PhotosController(
     [HttpGet("{id:guid}/file")]
     public async Task<IActionResult> GetFile(Guid id)
     {
-        var photo = await photoRepository.GetByIdAsync(id);
-        if (photo is null)
-            return NotFound();
+        var cacheKey = $"photo:{id}";
 
-        try
+        if (!cache.TryGetValue(cacheKey, out byte[]? imageBytes))
         {
-            var stream = await storageService.DownloadAsync(photo.StorageKey);
-            var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
-            return File(watermarked, "image/jpeg");
+            var photo = await photoRepository.GetByIdAsync(id);
+            if (photo is null)
+                return NotFound();
+
+            try
+            {
+                var stream = await storageService.DownloadAsync(photo.StorageKey);
+                var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
+                imageBytes = ((MemoryStream)watermarked).ToArray();
+
+                cache.Set(cacheKey, imageBytes, new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromHours(1),
+                    Size = imageBytes.Length,
+                });
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
-        catch
-        {
-            return NotFound();
-        }
+
+        Response.Headers.CacheControl = "public, max-age=3600";
+        return File(imageBytes!, "image/jpeg");
     }
 
     [HttpDelete("{id:guid}")]
