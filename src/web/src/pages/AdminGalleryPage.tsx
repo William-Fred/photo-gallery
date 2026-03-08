@@ -21,7 +21,9 @@ export default function AdminGalleryPage() {
             setError(null);
             try {
                 const res = await fetch(`/api/photos?page=${page}&pageSize=${PAGE_SIZE}`);
-                if (!res.ok) throw new Error(`Failed to fetch photos: ${res.statusText}`);
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch photos: ${res.statusText}`)
+                }
                 const photoData: Photo[] = await res.json();
                 setPhotos(photoData);
                 setTotal(photoData.length);

@@ -32,7 +32,9 @@ export default function ProjectPage() {
                     fetch(`/api/projects/${id}`),
                     fetch(`/api/photos?projectId=${id}`),
                 ])
-                if (!projectRes.ok) throw new Error('Project not found')
+                if (!projectRes.ok) {
+                    throw new Error('Project not found')
+                }
                 const [projectData, photosData] = await Promise.all([
                     projectRes.json(),
                     photosRes.json(),

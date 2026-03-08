@@ -40,7 +40,10 @@ public class ProjectsController(IProjectRepository projectRepository) : Controll
     public async Task<IActionResult> Delete(Guid id)
     {
         var project = await projectRepository.GetByIdAsync(id);
-        if (project is null) return NotFound();
+        if (project is null)
+        {
+            return NotFound();
+        }
 
         await projectRepository.DeleteAsync(id);
         return NoContent();

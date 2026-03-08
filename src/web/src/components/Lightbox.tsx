@@ -18,9 +18,9 @@ export default function Lightbox({ photos, index, onClose, onNavigate }: Props) 
 
     useEffect(() => {
         function handleKey(e: KeyboardEvent) {
-            if (e.key === 'Escape') onClose()
-            if (e.key === 'ArrowRight' && index < photos.length - 1) onNavigate(index + 1)
-            if (e.key === 'ArrowLeft' && index > 0) onNavigate(index - 1)
+            if (e.key === 'Escape') { onClose() }
+            if (e.key === 'ArrowRight' && index < photos.length - 1) { onNavigate(index + 1) }
+            if (e.key === 'ArrowLeft' && index > 0) { onNavigate(index - 1) }
         }
         window.addEventListener('keydown', handleKey)
         return () => window.removeEventListener('keydown', handleKey)

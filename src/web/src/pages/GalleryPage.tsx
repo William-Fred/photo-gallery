@@ -25,7 +25,9 @@ export default function GalleryPage() {
             setError(null);
             try {
                 const res = await fetch(`/api/photos/wall?page=${page}&pageSize=${PAGE_SIZE}`);
-                if (!res.ok) throw new Error(`Failed to fetch photos: ${res.statusText}`);
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch photos: ${res.statusText}`)
+                }
                 const photoData: Photo[] = await res.json();
                 setPhotos(photoData);
                 setTotal(photoData.length);

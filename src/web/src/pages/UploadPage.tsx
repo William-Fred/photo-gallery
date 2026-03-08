@@ -67,11 +67,13 @@ export default function UploadPage() {
 
     const formData = new FormData()
     formData.append('file', file)
-    if (projectId) formData.append('projectId', projectId)
+    if (projectId) { formData.append('projectId', projectId) }
 
     try {
       const response = await fetch('/api/photos', { method: 'POST', body: formData })
-      if (!response.ok) throw new Error(`Upload failed: ${response.statusText}`)
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`)
+      }
       setToast({ message: 'Photograph uploaded successfully.', type: 'success' })
       reset()
     } catch (err) {

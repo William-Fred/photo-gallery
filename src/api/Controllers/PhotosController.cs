@@ -38,7 +38,9 @@ public class PhotosController(
         {
             var photo = await photoRepository.GetByIdAsync(id);
             if (photo is null)
+            {
                 return NotFound();
+            }
 
             try
             {
@@ -68,7 +70,9 @@ public class PhotosController(
     {
         var photo = await photoRepository.GetByIdAsync(id);
         if (photo is null)
+        {
             return NotFound();
+        }
 
         await storageService.DeleteAsync(photo.StorageKey);
         await photoRepository.DeleteAsync(id);
