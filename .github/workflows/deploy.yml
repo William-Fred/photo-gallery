@@ -19,6 +19,9 @@ jobs:
       packages: write # tillåter push till ghcr.io
 
     steps:
+      - name: Set lowercase image name
+        run: echo "API_IMAGE=ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/photo-gallery-api" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -55,6 +58,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Set lowercase image name
+        run: echo "WEB_IMAGE=ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/photo-gallery-web" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
