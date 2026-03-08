@@ -43,8 +43,9 @@ public class PhotosController(
             try
             {
                 var stream = await storageService.DownloadAsync(photo.StorageKey);
-                var watermarked = await watermarkService.ApplyWatermarkAsync(stream);
-                imageBytes = ((MemoryStream)watermarked).ToArray();
+                var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                imageBytes = ms.ToArray();
 
                 cache.Set(cacheKey, imageBytes, new MemoryCacheEntryOptions
                 {
@@ -78,7 +79,8 @@ public class PhotosController(
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file, [FromForm] Guid? projectId)
     {
-        var storageKey = await storageService.UploadAsync(file.OpenReadStream(), file.FileName, file.ContentType);
+        var watermarkedPhoto = await watermarkService.ApplyWatermarkAsync(file.OpenReadStream());
+        var storageKey = await storageService.UploadAsync(watermarkedPhoto, file.FileName, file.ContentType);
 
         var photo = new Photo
         {
