@@ -113,6 +113,36 @@ Goal: organisera bilder i projekt och år.
 
 ---
 
+## Milestone 8.5 — Frontend Design & Polish
+
+Goal: give the gallery a strong visual identity that fits analog film photography. Strong first impression on the landing page, consistent typography and spacing across all pages.
+
+### Typography
+- [ ] Choose and install a font pairing (e.g. serif for headings, sans for body)
+- [ ] Define a global type scale and apply consistently across all pages
+- [ ] Remove default Vite/Tailwind font stack
+
+### Landing Page (`/`)
+- [ ] Redesign hero/header — strong first impression, not just a list of project cards
+- [ ] Improve project card layout and presentation
+- [ ] Consider visual hierarchy: what should the visitor see first?
+
+### Global Layout & Navigation
+- [ ] Design and implement a consistent navigation/header component
+- [ ] Define color palette (background, text, accent)
+- [ ] Consistent page padding, max-width, and spacing tokens
+
+### Gallery & Project Pages
+- [ ] `/wall` — improve image grid layout
+- [ ] `/projects/:id` — improve project page layout and heading
+- [ ] Lightbox: click on image → full-size view with metadata
+
+### Admin Pages
+- [ ] Apply consistent styling to `/admin`, `/admin/upload`, `/admin/projects`
+- [ ] Admin should feel distinct from public-facing pages (utility over aesthetics)
+
+---
+
 ## Milestone 9 — Authentication
 
 - [ ] Implement JWT authentication
